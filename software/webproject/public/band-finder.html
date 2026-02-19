@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Band Finder - Connect Musicians with Events</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <!-- VISITOR VIEW (Default) -->
+    <div id="visitor-view" class="view-container">
+        <header class="main-header">
+            <h1>Band Finder</h1>
+            <p class="tagline">Connect with bands for your events</p>
+        </header>
+
+        <div class="auth-section">
+            <div class="auth-buttons">
+                <button id="show-login" class="btn btn-primary">Login</button>
+                <button id="show-register" class="btn btn-secondary">Register</button>
+            </div>
+
+            <form id="login-form" class="auth-form" style="display: none;">
+                <h3>Login</h3>
+                <input type="text" id="login-username" placeholder="Username" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="button" id="cancel-login" class="btn btn-secondary">Cancel</button>
+                <p id="login-error" class="error"></p>
+            </form>
+
+            <div id="register-options" style="display: none;">
+                <h3>Register as:</h3>
+                <button id="register-user-btn" class="btn btn-primary">User</button>
+                <button id="register-band-btn" class="btn btn-primary">Band</button>
+                <button id="cancel-register" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+
+        <section class="public-section">
+            <h2>Upcoming Events</h2>
+            <div class="event-filters" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                <div class="filter-group">
+                    <label for="filter-city" style="font-weight: bold; margin-right: 5px;">City:</label>
+                    <select id="filter-city" onchange="applyEventFilters()">
+                        <option value="">All Cities</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-genre" style="font-weight: bold; margin-right: 5px;">Music Type:</label>
+                    <select id="filter-genre" onchange="applyEventFilters()">
+                        <option value="">All Genres</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-year" style="font-weight: bold; margin-right: 5px;">Band Founded:</label>
+                    <select id="filter-year" onchange="applyEventFilters()">
+                        <option value="">Any Year</option>
+                    </select>
+                </div>
+                <button class="btn btn-secondary" onclick="clearEventFilters()" style="margin-left: auto;">Clear Filters</button>
+            </div>
+            <div id="public-events-list" class="events-grid"></div>
+        </section>
+
+        <section class="public-section">
+            <h2>Browse Bands</h2>
+            <div class="band-filters" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                <div class="filter-group">
+                    <label for="band-filter-city" style="font-weight: bold; margin-right: 5px;">City:</label>
+                    <select id="band-filter-city" onchange="applyBandFilters()">
+                        <option value="">All Cities</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="band-filter-genre" style="font-weight: bold; margin-right: 5px;">Music Type:</label>
+                    <select id="band-filter-genre" onchange="applyBandFilters()">
+                        <option value="">All Genres</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="band-filter-year" style="font-weight: bold; margin-right: 5px;">Founded Year:</label>
+                    <select id="band-filter-year" onchange="applyBandFilters()">
+                        <option value="">Any Year</option>
+                    </select>
+                </div>
+                <button class="btn btn-secondary" onclick="clearBandFilters()" style="margin-left: auto;">Clear Filters</button>
+            </div>
+            <div id="public-bands-list" class="events-grid"></div>
+        </section>
+
+        <!-- PLUGINS SECTION -->
+        <div class="plugins-row" style="display: flex; gap: 20px; flex-wrap: wrap; margin: 20px 0;">
+            <!-- Weather Plugin -->
+            <section class="plugin-section" style="flex: 1; min-width: 300px;">
+                <h2>Weather</h2>
+                <div id="weather-widget" class="plugin-container">
+                    <div id="weather-content">
+                        <p>Loading weather...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Calendar Plugin -->
+            <section class="plugin-section" style="flex: 1; min-width: 300px;">
+                <h2>Calendar</h2>
+                <div id="calendar-widget" class="plugin-container">
+                    <div id="calendar-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <button class="btn btn-secondary" onclick="changeMonth(-1)">&lt; Prev</button>
+                        <h3 id="calendar-month-year" style="margin: 0;"></h3>
+                        <button class="btn btn-secondary" onclick="changeMonth(1)">Next &gt;</button>
+                    </div>
+                    <div id="calendar-grid"></div>
+                </div>
+            </section>
+        </div>
+
+        <section class="map-section">
+            <h2>Events Map</h2>
+            <div id="events-map" style="width: 100%; height: 500px; border-radius: 10px;"></div>
+        </section>
+    </div>
+
+    <!-- USER VIEW -->
+    <div id="user-view" class="view-container" style="display: none;">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Welcome, <span id="user-name"></span></h1>
+            </div>
+            <div class="header-right">
+                <button id="user-logout" class="btn btn-secondary">Logout</button>
+            </div>
+        </header>
+
+        <nav class="dashboard-nav">
+            <button class="nav-btn active" data-section="user-events">Find Events</button>
+            <button class="nav-btn" data-section="user-bookings">My Bookings</button>
+            <button class="nav-btn" data-section="user-bands">Browse Bands</button>
+            <button class="nav-btn" data-section="user-profile">Profile</button>
+        </nav>
+
+        <section id="user-events" class="content-section">
+            <h2>Events Near You</h2>
+            <div id="user-events-list" class="events-grid"></div>
+        </section>
+
+        <section id="user-bookings" class="content-section" style="display: none;">
+            <h2>My Private Event Requests</h2>
+            <div id="user-bookings-list" class="bookings-list"></div>
+        </section>
+
+        <section id="user-bands" class="content-section" style="display: none;">
+            <h2>Browse Bands</h2>
+            <p>Explore bands, request private events, and leave reviews</p>
+            <div id="user-bands-list" class="events-grid"></div>
+        </section>
+
+        <section id="user-profile" class="content-section" style="display: none;">
+            <h2>My Profile</h2>
+            <div id="profile-data" class="profile-container"></div>
+        </section>
+
+    </div>
+
+    <!-- BAND VIEW -->
+    <div id="band-view" class="view-container" style="display: none;">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1><span id="band-name"></span></h1>
+            </div>
+            <div class="header-right">
+                <button id="band-logout" class="btn btn-secondary">Logout</button>
+            </div>
+        </header>
+
+        <nav class="dashboard-nav">
+            <button class="nav-btn active" data-section="band-requests">Event Requests</button>
+            <button class="nav-btn" data-section="band-events">Our Events</button>
+            <button class="nav-btn" data-section="band-reviews">Reviews</button>
+            <button class="nav-btn" data-section="band-profile">Profile</button>
+        </nav>
+
+        <section id="band-requests" class="content-section">
+            <h2>Private Event Requests</h2>
+            <div id="band-requests-list" class="requests-list"></div>
+        </section>
+
+        <section id="band-events" class="content-section" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Upcoming Public Events</h2>
+                <button class="btn btn-primary" onclick="openCreateEventForm()">Create New Event</button>
+            </div>
+            <div id="band-events-list" class="events-grid"></div>
+        </section>
+
+        <section id="band-reviews" class="content-section" style="display: none;">
+            <h2>Our Reviews</h2>
+            <div id="band-reviews-list" class="reviews-list"></div>
+        </section>
+
+        <section id="band-profile" class="content-section" style="display: none;">
+            <h2>Our Profile</h2>
+            <div id="band-profile-content" class="profile-content"></div>
+        </section>
+    </div>
+
+    <script>
+        // Fetch the Maps API key from the backend (stored in .env, never hardcoded).
+        // Load Google Maps first, then main.js so the google object is available.
+        fetch('/api/maps-config')
+            .then(function(r) { return r.json(); })
+            .then(function(cfg) {
+                var mapsScript = document.createElement('script');
+                mapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=' + cfg.key;
+                mapsScript.onload = function() {
+                    var mainScript = document.createElement('script');
+                    mainScript.src = 'js/main.js';
+                    document.body.appendChild(mainScript);
+                };
+                document.head.appendChild(mapsScript);
+            })
+            .catch(function(err) {
+                console.error('Failed to load Maps configuration:', err);
+                // Still load main.js so the rest of the app works
+                var mainScript = document.createElement('script');
+                mainScript.src = 'js/main.js';
+                document.body.appendChild(mainScript);
+            });
+    </script>
+</body>
+</html>

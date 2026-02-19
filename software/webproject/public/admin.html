@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Band Finder</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffffff;
+        }
+        .admin-header {
+            background-color: #007bff;
+            color: white;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .admin-header h1 {
+            margin-bottom: 5px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #ffffff;
+            padding: 20px;
+            border: 1px solid #cccccc;
+        }
+        .stat-card h3 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+        .chart-container {
+            background: #ffffff;
+            padding: 20px;
+            border: 1px solid #cccccc;
+            margin-bottom: 20px;
+        }
+        .chart-container h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        .reviews-section {
+            background: #ffffff;
+            padding: 20px;
+            border: 1px solid #cccccc;
+            margin-top: 20px;
+        }
+        .reviews-section h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        .review-item {
+            border: 1px solid #cccccc;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+        }
+        .review-item h4 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .review-item p {
+            margin: 8px 0;
+        }
+        .review-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .review-actions button {
+            flex: 1;
+            min-width: 120px;
+        }
+        .users-section {
+            background: #ffffff;
+            padding: 20px;
+            border: 1px solid #cccccc;
+            margin-top: 20px;
+        }
+        .users-section h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .users-table th,
+        .users-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #cccccc;
+        }
+        .users-table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        .users-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <p>Band Finder Management System</p>
+            <button id="logout-btn" class="btn btn-secondary">Logout</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <div class="stat-value" id="total-users">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Bands</h3>
+                <div class="stat-value" id="total-bands">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Public Events</h3>
+                <div class="stat-value" id="public-events">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Private Events</h3>
+                <div class="stat-value" id="private-events">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Revenue (15%)</h3>
+                <div class="stat-value" id="total-revenue">€0</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Bands per City</h2>
+            <div id="bands-chart" style="width: 100%; height: 400px;"></div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Events Distribution</h2>
+            <div id="events-chart" style="width: 100%; height: 400px;"></div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Users vs Bands</h2>
+            <div id="users-chart" style="width: 100%; height: 400px;"></div>
+        </div>
+
+        <div class="users-section">
+            <h2>User Management</h2>
+            <p>View and manage all registered users</p>
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Telephone</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="users-list">
+                    <tr>
+                        <td colspan="8">Loading users...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="reviews-section">
+            <h2>Pending Reviews</h2>
+            <div id="pending-reviews"></div>
+        </div>
+    </div>
+
+    <script>
+        // Check if Google Charts is available
+        if (typeof google === 'undefined' || typeof google.charts === 'undefined') {
+            console.error('Google Charts library not loaded!');
+            document.querySelectorAll('.chart-container div[id$="-chart"]').forEach(el => {
+                el.innerHTML = '<p style="color:red;text-align:center;padding:50px;">Google Charts failed to load. Check your internet connection or ad blocker.</p>';
+            });
+        } else {
+            console.log('Google Charts library loaded successfully');
+            google.charts.load('current', {'packages':['corechart', 'bar']});
+            google.charts.setOnLoadCallback(loadData);
+        }
+
+        async function loadData() {
+            console.log('loadData() called - fetching statistics...');
+            try {
+                const response = await fetch('/api/admin/statistics', {
+                    credentials: 'include'
+                });
+
+                console.log('Statistics response status:', response.status);
+
+                if (!response.ok) {
+                    console.error('Failed to fetch statistics, redirecting to login');
+                    window.location.href = 'band-finder.html';
+                    return;
+                }
+
+                const data = await response.json();
+                console.log('Statistics data received:', data);
+
+                document.getElementById('total-users').textContent = data.totalUsers || 0;
+                document.getElementById('total-bands').textContent = data.totalBands || 0;
+                document.getElementById('public-events').textContent = data.publicEvents || 0;
+                document.getElementById('private-events').textContent = data.privateEvents || 0;
+                document.getElementById('total-revenue').textContent = '€' + parseFloat(data.totalRevenue || 0).toFixed(2);
+
+                // Check if Google visualization is ready before drawing charts
+                if (typeof google !== 'undefined' && google.visualization) {
+                    console.log('Google visualization ready, drawing charts...');
+                    drawBandsChart(data.bandsPerCity);
+                    drawEventsChart(data.publicEvents, data.privateEvents);
+                    drawUsersChart(data.totalUsers, data.totalBands);
+                } else {
+                    console.error('Google visualization not ready');
+                    document.querySelectorAll('.chart-container div[id$="-chart"]').forEach(el => {
+                        el.innerHTML = '<p style="color:red;text-align:center;padding:50px;">Google Charts visualization not ready</p>';
+                    });
+                }
+
+            } catch (error) {
+                console.error('Failed to load statistics:', error);
+            }
+
+            loadPendingReviews();
+            loadAllUsers();
+        }
+
+        function drawBandsChart(bandsPerCity) {
+            console.log('Drawing bands chart with data:', bandsPerCity);
+
+            if (!bandsPerCity || bandsPerCity.length === 0) {
+                document.getElementById('bands-chart').innerHTML = '<p style="text-align:center;padding:50px;">No band data available</p>';
+                return;
+            }
+
+            const dataArray = [['City', 'Number of Bands']];
+            bandsPerCity.forEach(item => {
+                // Handle null city names
+                const cityName = item.band_city || 'Unknown';
+                dataArray.push([cityName, item.count]);
+            });
+
+            console.log('Chart data array:', dataArray);
+
+            try {
+                const data = google.visualization.arrayToDataTable(dataArray);
+
+                const options = {
+                    title: 'Distribution of Bands by City',
+                    colors: ['#007bff'],
+                    legend: { position: 'none' }
+                };
+
+                const chart = new google.visualization.ColumnChart(document.getElementById('bands-chart'));
+                chart.draw(data, options);
+                console.log('Bands chart drawn successfully');
+            } catch (error) {
+                console.error('Error drawing bands chart:', error);
+                document.getElementById('bands-chart').innerHTML = '<p style="color:red;text-align:center;">Error loading chart: ' + error.message + '</p>';
+            }
+        }
+
+        function drawEventsChart(publicEvents, privateEvents) {
+            console.log('Drawing events chart:', { publicEvents, privateEvents });
+
+            try {
+                const data = google.visualization.arrayToDataTable([
+                    ['Event Type', 'Count'],
+                    ['Public Events', publicEvents || 0],
+                    ['Private Events', privateEvents || 0]
+                ]);
+
+                const options = {
+                    title: 'Public vs Private Events',
+                    colors: ['#007bff', '#6c757d'],
+                    pieHole: 0.4
+                };
+
+                const chart = new google.visualization.PieChart(document.getElementById('events-chart'));
+                chart.draw(data, options);
+                console.log('Events chart drawn successfully');
+            } catch (error) {
+                console.error('Error drawing events chart:', error);
+                document.getElementById('events-chart').innerHTML = '<p style="color:red;text-align:center;">Error loading chart: ' + error.message + '</p>';
+            }
+        }
+
+        function drawUsersChart(users, bands) {
+            console.log('Drawing users chart:', { users, bands });
+
+            try {
+                const data = google.visualization.arrayToDataTable([
+                    ['Type', 'Count'],
+                    ['Users', users || 0],
+                    ['Bands', bands || 0]
+                ]);
+
+                const options = {
+                    title: 'Users vs Bands',
+                    colors: ['#28a745', '#17a2b8'],
+                    legend: { position: 'bottom' }
+                };
+
+                const chart = new google.visualization.BarChart(document.getElementById('users-chart'));
+                chart.draw(data, options);
+                console.log('Users chart drawn successfully');
+            } catch (error) {
+                console.error('Error drawing users chart:', error);
+                document.getElementById('users-chart').innerHTML = '<p style="color:red;text-align:center;">Error loading chart: ' + error.message + '</p>';
+            }
+        }
+
+        async function loadPendingReviews() {
+            try {
+                const response = await fetch('/api/admin/reviews', {
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    document.getElementById('pending-reviews').innerHTML =
+                        '<p class="error">Failed to load reviews. Please make sure you are logged in as admin.</p>';
+                    return;
+                }
+
+                const reviews = await response.json();
+                const pendingReviews = reviews.filter(r => r.status === 'pending');
+                const container = document.getElementById('pending-reviews');
+
+                if (pendingReviews.length === 0) {
+                    container.innerHTML = '<p>No pending reviews</p>';
+                    return;
+                }
+
+                container.innerHTML = pendingReviews.map(review => `
+                    <div class="review-item" id="review-item-${review.review_id}">
+                        <h4>${review.band_name}</h4>
+                        <p><strong>Review ID:</strong> ${review.review_id}</p>
+                        <p><strong>From:</strong> ${review.sender}</p>
+                        <p><strong>Rating:</strong> ${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</p>
+                        <p><strong>Date:</strong> ${new Date(review.date_time).toLocaleString()}</p>
+                        <p><strong>Review:</strong> ${review.review}</p>
+                        <div class="review-actions">
+                            <button class="btn btn-success" onclick="approveReview(${review.review_id})">Approve (Publish)</button>
+                            <button class="btn btn-danger" onclick="rejectReview(${review.review_id})">Reject</button>
+                            <button class="btn btn-secondary" onclick="deleteReview(${review.review_id})">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Failed to load reviews:', error);
+            }
+        }
+
+        async function approveReview(reviewId) {
+            try {
+                const response = await fetch(`/reviewStatus/${reviewId}/published`, {
+                    method: 'PUT',
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`Review #${reviewId} approved and published successfully!`);
+                    // Remove the review item from the list
+                    const reviewItem = document.getElementById(`review-item-${reviewId}`);
+                    if (reviewItem) {
+                        reviewItem.remove();
+                    }
+                    // Reload to update count
+                    loadPendingReviews();
+                } else {
+                    alert(`Failed to approve review: ${result.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Approve review error:', error);
+                alert('Network error: Failed to approve review');
+            }
+        }
+
+        async function rejectReview(reviewId) {
+            if (!confirm(`Are you sure you want to reject review #${reviewId}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/reviewStatus/${reviewId}/rejected`, {
+                    method: 'PUT',
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`Review #${reviewId} rejected successfully!`);
+                    // Remove the review item from the list
+                    const reviewItem = document.getElementById(`review-item-${reviewId}`);
+                    if (reviewItem) {
+                        reviewItem.remove();
+                    }
+                    // Reload to update count
+                    loadPendingReviews();
+                } else {
+                    alert(`Failed to reject review: ${result.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Reject review error:', error);
+                alert('Network error: Failed to reject review');
+            }
+        }
+
+        async function deleteReview(reviewId) {
+            if (!confirm(`Are you sure you want to permanently delete review #${reviewId}?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/reviewDeletion/${reviewId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`Review #${reviewId} deleted successfully!`);
+                    // Remove the review item from the list
+                    const reviewItem = document.getElementById(`review-item-${reviewId}`);
+                    if (reviewItem) {
+                        reviewItem.remove();
+                    }
+                    // Reload to update count
+                    loadPendingReviews();
+                } else {
+                    alert(`Failed to delete review: ${result.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Delete review error:', error);
+                alert('Network error: Failed to delete review');
+            }
+        }
+
+        async function loadAllUsers() {
+            try {
+                const response = await fetch('/users', {
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    document.getElementById('users-list').innerHTML =
+                        '<tr><td colspan="8">Failed to load users</td></tr>';
+                    return;
+                }
+
+                const users = await response.json();
+                const tbody = document.getElementById('users-list');
+
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8">No users found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = users.map(user => `
+                    <tr id="user-row-${user.user_id}">
+                        <td>${user.user_id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.email}</td>
+                        <td>${user.firstname} ${user.lastname}</td>
+                        <td>${user.country || 'N/A'}</td>
+                        <td>${user.city || 'N/A'}</td>
+                        <td>${user.telephone}</td>
+                        <td>
+                            <button class="btn-delete" onclick="deleteUser(${user.user_id}, '${user.username}')">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Failed to load users:', error);
+                document.getElementById('users-list').innerHTML =
+                    '<tr><td colspan="8">Error loading users</td></tr>';
+            }
+        }
+
+        async function deleteUser(userId, username) {
+            if (!confirm(`Are you sure you want to delete user "${username}"?\n\nThis will also delete:\n- All their private event requests\n- All their profile visits\n\nThis action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert('Failed to delete user: ' + error.error);
+                    return;
+                }
+
+                const result = await response.json();
+                alert('User deleted successfully: ' + result.username);
+
+                // Remove the row from the table
+                const row = document.getElementById(`user-row-${userId}`);
+                if (row) {
+                    row.remove();
+                }
+
+                // Reload statistics to update counts
+                loadData();
+
+            } catch (error) {
+                console.error('Delete user error:', error);
+                alert('Failed to delete user. Please try again.');
+            }
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                await fetch('/api/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                window.location.href = 'band-finder.html';
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        });
+    </script>
+</body>
+</html>

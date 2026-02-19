@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="REST API Testing - Άσκηση 3">
+    <meta name="author" content="George Kiosklis">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/assignment3.css">
+    <title>REST API Testing - Άσκηση 3</title>
+</head>
+<body>
+    <header class="bg-primary text-white text-center py-4">
+        <h1>REST API Testing</h1>
+        <p>Δοκιμή Endpoints για Κριτικές Μπαντών</p>
+    </header>
+
+    <div class="container mt-4">
+        <div class="page-header">
+            <h2>Εργασία 4: REST API</h2>
+            <p>Ανεξάρτητο API για CRUD operations σε κριτικές (χωρίς authentication)</p>
+        </div>
+
+        <!-- Available Endpoints -->
+        <div class="content-box">
+            <h3>Διαθέσιμα Endpoints</h3>
+            <ul>
+                <li><strong>POST /review/</strong> - Δημιουργία κριτικής (status: pending)</li>
+                <li><strong>GET /reviews/:band_name</strong> - Λήψη published κριτικών (με rating filters)</li>
+                <li><strong>PUT /reviewStatus/:review_id/:status</strong> - Ενημέρωση status</li>
+                <li><strong>DELETE /reviewDeletion/:review_id</strong> - Διαγραφή κριτικής</li>
+            </ul>
+        </div>
+
+        <!-- 1. Create Review -->
+        <div class="content-box">
+            <h3>1. Δημιουργία Κριτικής (POST /review/)</h3>
+            <form id="createForm">
+                <div class="form-group">
+                    <label>Band Name:</label>
+                    <input type="text" class="form-control" id="createBandName" placeholder="The Rolling Stones" required>
+                </div>
+                <div class="form-group">
+                    <label>Sender:</label>
+                    <input type="text" class="form-control" id="createSender" placeholder="Το όνομά σας" required>
+                </div>
+                <div class="form-group">
+                    <label>Review Text:</label>
+                    <textarea class="form-control" id="createReview" rows="3" placeholder="Η κριτική σας..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Rating (1-5):</label>
+                    <input type="number" class="form-control" id="createRating" min="1" max="5" value="5" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Δημιουργία Κριτικής</button>
+            </form>
+            <div id="createResponse" class="api-response hidden">
+                <h4>Response:</h4>
+                <pre id="createResult"></pre>
+            </div>
+        </div>
+
+        <!-- 2. Get Reviews -->
+        <div class="content-box">
+            <h3>2. Λήψη Κριτικών (GET /reviews/:band_name)</h3>
+            <form id="getForm">
+                <div class="form-group">
+                    <label>Band Name:</label>
+                    <input type="text" class="form-control" id="getBandName" placeholder="The Rolling Stones ή 'all'" required>
+                    <small class="form-text text-muted">Χρησιμοποιήστε "all" για όλες τις κριτικές</small>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Rating From:</label>
+                            <input type="number" class="form-control" id="getRatingFrom" min="1" max="5" placeholder="1">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Rating To:</label>
+                            <input type="number" class="form-control" id="getRatingTo" min="1" max="5" placeholder="5">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Λήψη Κριτικών</button>
+            </form>
+            <div id="getResponse" class="api-response hidden">
+                <h4>Response:</h4>
+                <pre id="getResult"></pre>
+            </div>
+        </div>
+
+        <!-- 3. Update Review Status -->
+        <div class="content-box">
+            <h3>3. Ενημέρωση Status (PUT /reviewStatus/:review_id/:status)</h3>
+            <form id="updateForm">
+                <div class="form-group">
+                    <label>Review ID:</label>
+                    <input type="number" class="form-control" id="updateReviewId" placeholder="1" required>
+                </div>
+                <div class="form-group">
+                    <label>New Status:</label>
+                    <select class="form-control" id="updateStatus" required>
+                        <option value="pending">pending</option>
+                        <option value="published">published</option>
+                        <option value="rejected">rejected</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-warning">Ενημέρωση Status</button>
+            </form>
+            <div id="updateResponse" class="api-response hidden">
+                <h4>Response:</h4>
+                <pre id="updateResult"></pre>
+            </div>
+        </div>
+
+        <!-- 4. Delete Review -->
+        <div class="content-box">
+            <h3>4. Διαγραφή Κριτικής (DELETE /reviewDeletion/:review_id)</h3>
+            <form id="deleteForm">
+                <div class="form-group">
+                    <label>Review ID:</label>
+                    <input type="number" class="form-control" id="deleteReviewId" placeholder="1" required>
+                </div>
+                <button type="submit" class="btn btn-danger">Διαγραφή Κριτικής</button>
+            </form>
+            <div id="deleteResponse" class="api-response hidden">
+                <h4>Response:</h4>
+                <pre id="deleteResult"></pre>
+            </div>
+        </div>
+
+        <!-- HTTP Status Codes Reference -->
+        <div class="content-box">
+            <h3>HTTP Status Codes Reference</h3>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Meaning</th>
+                        <th>When Used</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>200 OK</strong></td>
+                        <td>Επιτυχής απάντηση</td>
+                        <td>GET/PUT/DELETE success</td>
+                    </tr>
+                    <tr>
+                        <td><strong>201 Created</strong></td>
+                        <td>Δημιουργήθηκε πόρος</td>
+                        <td>POST success</td>
+                    </tr>
+                    <tr>
+                        <td><strong>400 Bad Request</strong></td>
+                        <td>Λάθος δεδομένα</td>
+                        <td>Invalid input data</td>
+                    </tr>
+                    <tr>
+                        <td><strong>403 Forbidden</strong></td>
+                        <td>Δεν επιτρέπεται</td>
+                        <td>Validation failed</td>
+                    </tr>
+                    <tr>
+                        <td><strong>404 Not Found</strong></td>
+                        <td>Δεν βρέθηκε</td>
+                        <td>Band/Review doesn't exist</td>
+                    </tr>
+                    <tr>
+                        <td><strong>406 Not Acceptable</strong></td>
+                        <td>Μη αποδεκτά δεδομένα</td>
+                        <td>Rating not 1-5</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer class="text-white text-center py-3">
+        <p>© 2025 - HY359 - Εργασία 3 - George Kiosklis</p>
+    </footer>
+
+    <script>
+        "use strict";
+
+        // 1. Create Review
+        document.getElementById('createForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const data = {
+                band_name: document.getElementById('createBandName').value,
+                sender: document.getElementById('createSender').value,
+                review: document.getElementById('createReview').value,
+                rating: parseInt(document.getElementById('createRating').value)
+            };
+            
+            try {
+                const response = await fetch('/review/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                displayResponse('create', response.status, result);
+            } catch (error) {
+                displayResponse('create', 500, { error: 'Network error' });
+            }
+        });
+
+        // 2. Get Reviews
+        document.getElementById('getForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const bandName = document.getElementById('getBandName').value;
+            const ratingFrom = document.getElementById('getRatingFrom').value;
+            const ratingTo = document.getElementById('getRatingTo').value;
+            
+            let url = `/reviews/${bandName}`;
+            const params = [];
+            if (ratingFrom) params.push(`ratingFrom=${ratingFrom}`);
+            if (ratingTo) params.push(`ratingTo=${ratingTo}`);
+            if (params.length > 0) url += '?' + params.join('&');
+            
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                displayResponse('get', response.status, result);
+            } catch (error) {
+                displayResponse('get', 500, { error: 'Network error' });
+            }
+        });
+
+        // 3. Update Status
+        document.getElementById('updateForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const reviewId = document.getElementById('updateReviewId').value;
+            const status = document.getElementById('updateStatus').value;
+            
+            try {
+                const response = await fetch(`/reviewStatus/${reviewId}/${status}`, {
+                    method: 'PUT'
+                });
+                const result = await response.json();
+                displayResponse('update', response.status, result);
+            } catch (error) {
+                displayResponse('update', 500, { error: 'Network error' });
+            }
+        });
+
+        // 4. Delete Review
+        document.getElementById('deleteForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const reviewId = document.getElementById('deleteReviewId').value;
+            
+            try {
+                const response = await fetch(`/reviewDeletion/${reviewId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                displayResponse('delete', response.status, result);
+            } catch (error) {
+                displayResponse('delete', 500, { error: 'Network error' });
+            }
+        });
+
+        // Display Response
+        function displayResponse(type, status, data) {
+            const responseDiv = document.getElementById(type + 'Response');
+            const resultPre = document.getElementById(type + 'Result');
+            
+            responseDiv.classList.remove('hidden');
+            
+            const formatted = {
+                status: status,
+                statusText: getStatusText(status),
+                data: data
+            };
+            
+            resultPre.textContent = JSON.stringify(formatted, null, 2);
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                200: 'OK',
+                201: 'Created',
+                400: 'Bad Request',
+                403: 'Forbidden',
+                404: 'Not Found',
+                406: 'Not Acceptable',
+                500: 'Internal Server Error'
+            };
+            return texts[status] || 'Unknown';
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

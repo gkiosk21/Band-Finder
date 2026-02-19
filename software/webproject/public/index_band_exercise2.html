@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="el">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Φόρμα εγγραφής μουσικού συγκροτήματος">
+    <meta name="keywords" content="εγγραφή, band, μουσική, φόρμα">
+    <meta name="author" content="George Kiosklis">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/indexstyle.css">
+    <link rel="stylesheet" href="css/map-style.css">
+    <title>Εγγραφή Band - Άσκηση 2</title>
+</head>
+
+<body>
+    <header class="bg-primary text-white text-center py-4">
+        <h1>Φόρμα Εγγραφής</h1>
+        <p>Συμπληρώστε τα στοιχεία του συγκροτήματός σας</p>
+    </header>
+
+    <!-- SELECTION MENU -->
+    <div class="container mt-4">
+        <div class="registration-type-selector">
+            <h4 class="text-center mb-3">Επιλέξτε Τύπο Εγγραφής:</h4>
+            <div class="row justify-content-center">
+                <div class="col-md-5">
+                    <a href="index_user_exercise2.html" class="btn btn-selection btn-block">
+                        Απλός Χρήστης
+                    </a>
+                </div>
+                <div class="col-md-5">
+                    <a href="index_band_exercise2.html" class="btn btn-selection btn-active btn-block">
+                        Band
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN FORM -->
+    <main class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-container">
+                    <h2 class="text-center mb-4">Εγγραφή Band</h2>
+                    <form id="band-register-form" onsubmit="registerBand(event)">
+
+                        <!-- Username -->
+                        <div class="form-group">
+                            <label for="username">Username <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="band-username" name="username"
+                                pattern="[a-zA-Z][a-zA-Z0-9]{5,}"
+                                title="Τουλάχιστον 6 χαρακτήρες, δεν ξεκινά με αριθμό ή σύμβολο" required
+                                onblur="checkAvailability('username', this.value, 'band-username')">
+                                <span id="band-username-msg"></span>
+                            <small class="form-text text-muted">Τουλάχιστον 6 χαρακτήρες (λατινικοί)</small>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" class="form-control" id="band-email" name="email" required
+                            onblur="checkAvailability('email', this.value, 'band-email')">
+                            <span id="band-email-msg"></span>
+                            <small class="form-text text-muted">Έγκυρη διεύθυνση email</small>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label for="password">Κωδικός Χρήστη <span class="required">*</span></label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="band-password" name="password"
+                                    pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[#$%&@!*]).{8,14}" minlength="8" maxlength="14"
+                                    title="8-14 χαρακτήρες, τουλάχιστον 1 κεφαλαίο, 1 αριθμό, 1 σύμβολο" required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePassword('band-password', 'band-eye-icon')">
+                                        <span id="band-eye-icon">show</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">8-14 χαρακτήρες, 1 κεφαλαίο, 1 αριθμός, 1 σύμβολο</small>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="form-group">
+                            <label for="confirmPassword">Επιβεβαίωση Κωδικού <span class="required">*</span></label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="band-password-conf" name="confirmPassword"
+                                    pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[#$%&@!*]).{8,14}" minlength="8" maxlength="14"
+                                    title="Πρέπει να ταιριάζει με τον κωδικό" required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePassword('band-password-conf', 'band-conf-eye-icon')">
+                                        <span id="band-conf-eye-icon">show</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Band Name -->
+                        <div class="form-group">
+                            <label for="band_name">Όνομα Μπάντας <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="band-name" name="band_name" minlength="3"
+                                maxlength="30" required>
+                            <small class="form-text text-muted">3-30 χαρακτήρες</small>
+                        </div>
+
+                        <!-- Music Genres -->
+                        <div class="form-group">
+                            <label for="music_genres">Είδη Μουσικής <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="band-genres" name="music_genres" minlength="3"
+                                maxlength="200" placeholder="π.χ. Rock, Jazz, Blues" required>
+                            <small class="form-text text-muted">3-200 χαρακτήρες</small>
+                        </div>
+
+                        <!-- Band Description -->
+                        <div class="form-group">
+                            <label for="band_description">Περιγραφή Μπάντας <span class="required">*</span></label>
+                            <textarea class="form-control" id="band-desc" name="band_description" minlength="3"
+                                maxlength="1000" rows="5"
+                                placeholder="Περιγράψτε τη μπάντα σας, το στυλ σας, την ιστορία σας..."
+                                required></textarea>
+                            <small class="form-text text-muted">3-1000 χαρακτήρες</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="photo">Φωτογραφία (URL ή Όνομα αρχείου) <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="band-photo" name="photo"
+                                placeholder="π.χ. bandname.jpg ή https://example.com/photo.jpg" required>
+                            <small class="form-text text-muted">Το όνομα του αρχείου της φωτογραφίας</small>
+                        </div>
+                        <!-- Number of Members -->
+                        <div class="form-group">
+                            <label for="members_number">Αριθμός Μελών <span class="required">*</span></label>
+                            <input type="number" class="form-control" id="band-members" name="members_number" min="1"
+                                max="10" placeholder="π.χ. 4" required>
+                            <small class="form-text text-muted">1-10 μέλη</small>
+                        </div>
+
+                        <!-- Founded Year -->
+                        <div class="form-group">
+                            <label for="foundedYear">Χρονιά Ίδρυσης Μπάντας <span class="required">*</span></label>
+                            <input type="number" class="form-control" id="band-year" name="foundedYear" min="1960"
+                                max="2025" placeholder="π.χ. 2020" required>
+                            <small class="form-text text-muted">Από 1960 και μετά</small>
+                        </div>
+
+                        <!-- Country -->
+                        <div class="form-group">
+                            <label for="country">Χώρα <span class="required">*</span></label>
+                            <select class="form-control" id="country" name="country" required>
+                                <option value="">-- Επιλέξτε Χώρα --</option>
+                                <option value="Greece" selected>Ελλάδα (Greece)</option>
+                                <option value="Cyprus">Κύπρος (Cyprus)</option>
+                                <option value="Italy">Ιταλία (Italy)</option>
+                                <option value="Spain">Ισπανία (Spain)</option>
+                                <option value="France">Γαλλία (France)</option>
+                            </select>
+                            <small class="form-text text-muted">Επιλέξτε χώρα (Υπηρεσία διαθέσιμη μόνο για Ελλάδα)</small>
+                        </div>
+
+                        <!-- Band City -->
+                        <div class="form-group">
+                            <label for="band_city">Πόλη/Δήμος Μπάντας <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="band-city" name="band_city" minlength="3"
+                                maxlength="50" placeholder="π.χ. Ηράκλειο" required>
+                            <small class="form-text text-muted">3-50 χαρακτήρες</small>
+                        </div>
+
+                        <!-- Street Address -->
+                        <div class="form-group">
+                            <label for="street_address">Διεύθυνση (Οδός και Αριθμός) <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="band-address" name="street_address" 
+                                minlength="3" maxlength="100" placeholder="π.χ. Κνωσού 18" required>
+                            <small class="form-text text-muted">Πλήρης διεύθυνση (οδός και αριθμός)</small>
+                        </div>
+
+                        <!-- Address Verification Button -->
+                        <div class="form-group">
+                            <button type="button" id="verifyAddressBtn" class="btn btn-info btn-block">
+                                Επαλήθευση Διεύθυνσης
+                            </button>
+                        </div>
+
+                        <!-- Address Verification Message Area -->
+                        <div id="addressMessage" class="address-message"></div>
+
+                        <!-- Show Map Button (hidden initially) -->
+                        <div class="form-group" id="showMapContainer" style="display: none;">
+                            <button type="button" id="showMapBtn" class="btn btn-success btn-block">
+                                Εμφάνιση Χάρτη
+                            </button>
+                        </div>
+
+                        <!-- Map Container -->
+                        <div id="mapContainer" class="map-container" style="display: none;">
+                            <div id="Map" class="osm-map"></div>
+                        </div>
+
+                        <!-- End of Exercise 2 Section -->
+
+                        <!-- Phone -->
+                        <div class="form-group mt-4">
+                            <label for="telephone">Τηλέφωνο <span class="required">*</span></label>
+                            <input type="tel" class="form-control" id="band-phone" name="telephone"
+                                pattern="[0-9]{10,14}" title="10-14 ψηφία" placeholder="2810123456" required>
+                            <small class="form-text text-muted">10-14 ψηφία</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="webpage">Ιστοσελίδα (Προαιρετικό)</label>
+                            <input type="url" class="form-control" id="band-webpage" name="webpage" placeholder="https://www.example.com"
+                                pattern="https?://.+" title="Η διεύθυνση πρέπει να ξεκινάει με http:// ή https://">
+                            <small class="form-text text-muted">Η επίσημη ιστοσελίδα ή social media της μπάντας</small>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary btn-block btn-lg mt-4">
+                            Εγγραφή
+                        </button>
+                        <div id="band-error-message" style="color: red;"></div>
+                    </form>
+
+                    <!-- JSON Output Section -->
+                    <div id="jsonOutput" class="mt-5" style="display: none;">
+                        <h3 class="text-center mb-3">Δεδομένα Φόρμας σε JSON</h3>
+                        <div class="alert alert-info">
+                            <h5>Η φόρμα υποβλήθηκε επιτυχώς!</h5>
+                            <p class="mb-2">Τα δεδομένα της μπάντας σας σε JSON μορφή:</p>
+                        </div>
+                        <pre id="jsonContent" class="bg-dark text-light p-3 rounded" style="max-height: 500px; overflow-y: auto;"></pre>
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn btn-secondary" onclick="copyJSON()">
+                                Αντιγραφή JSON
+                            </button>
+                            <button type="button" class="btn btn-warning ml-2" onclick="resetForm()">
+                                Νέα Εγγραφή
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-primary text-white text-center py-3">
+        <p>&copy; 2025 George Kiosklis - hy359</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- OpenLayers for Maps -->
+    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+    
+    <script src="js/address-verification.js"></script>
+
+    <!-- Form Handler Script -->
+    <script src="js/register.js"></script>
+    
+</body>
+
+</html>

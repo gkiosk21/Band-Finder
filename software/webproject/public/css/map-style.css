@@ -1,0 +1,118 @@
+/* Address Message Styling */
+.address-message {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 5px;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Map Container Styling */
+.map-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        max-height: 1000px;
+        transform: translateY(0);
+    }
+}
+
+/* OSM Map Styling */
+.osm-map {
+    height: 500px;
+    width: 100%;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styling for Verify and Show Map */
+#verifyAddressBtn {
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+#verifyAddressBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+#verifyAddressBtn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+#showMapBtn {
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+#showMapBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+/* Alert Info Box for Exercise 2 Section */
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.alert-info h5 {
+    margin: 0;
+    font-weight: bold;
+}
+
+/* OpenLayers Popup Styling Override */
+.olPopup {
+    z-index: 1000;
+}
+
+.olPopupContent {
+    padding: 10px;
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .osm-map {
+        height: 400px;
+    }
+    
+    .map-container {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .osm-map {
+        height: 300px;
+    }
+}

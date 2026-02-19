@@ -1,0 +1,130 @@
+<!-- REPORT PAGE FOR FAST AND EASY ACCESS TO ALL ASSIGNEMENT TASKS -->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Άσκηση 3 - Πλοήγηση">
+    <meta name="keywords" content="άσκηση, web programming, hy359">
+    <meta name="author" content="George Kiosklis">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/assignment3.css">
+    <title>Άσκηση 3 - Πλοήγηση</title>
+</head>
+<body>
+    <header class="bg-primary text-white text-center py-4">
+        <h1>Άσκηση 3 - HY359</h1>
+        <p>Web Programming - Assignment 3</p>
+    </header>
+
+    <div class="container mt-4">
+        <!-- Quick Start Instructions -->
+        <div class="content-box">
+            <ul>
+                <li><a href="/initdb" target="_blank">http://localhost:3000/initdb</a> - Δημιουργία πινάκων</li>
+                <li><a href="/insertRecords" target="_blank">http://localhost:3000/insertRecords</a> - Εισαγωγή δεδομένων</li>
+            </ul>
+        </div>
+
+        <!-- Task 1 -->
+        <div class="nav-links">
+            <h3>Εργασία 1: Εγγραφή με AJAX Έλεγχο</h3>
+            <p><strong>Στόχος:</strong> Έλεγχος διπλότυπων username/email με AJAX κατά την πληκτρολόγηση</p>
+            <p><strong>Χαρακτηριστικά:</strong></p>
+            <ul>
+                <li>AJAX duplicate checking με debouncing (500ms)</li>
+                <li>Οπτικό feedback (πράσινο ή κόκκινο)</li>
+                <li>Έλεγχος και στους δύο πίνακες (users, bands)</li>
+                <li>XSS protection με sanitization</li>
+            </ul>
+            <a href="index_user_exercise2.html" class="nav-link-item" target="_blank">
+                Φόρμα Εγγραφής Χρήστη
+            </a>
+            <a href="index_band_exercise2.html" class="nav-link-item" target="_blank">
+                Φόρμα Εγγραφής Μπάντας
+            </a>
+        </div>
+
+        <!-- Task 2 -->
+        <div class="nav-links">
+            <h3>Εργασία 2: Προφίλ Χρήστη με Session Management</h3>
+            <p><strong>Στόχος:</strong> Single Page Application με sessions για προβολή/επεξεργασία προφίλ</p>
+            <p><strong>Χαρακτηριστικά:</strong></p>
+            <ul>
+                <li>Login/Logout με sessions</li>
+                <li>SPA (χωρίς ανανέωση σελίδας)</li>
+                <li>Protected routes με requireAuth middleware</li>
+                <li>Επεξεργασία προφίλ (εκτός από username/email)</li>
+            </ul>
+            <a href="profile.html" class="nav-link-item" target="_blank">
+                Προφίλ Χρήστη (SPA)
+            </a>
+        </div>
+
+        <!-- Task 4 -->
+        <div class="nav-links">
+            <h3>Εργασία 4: REST API για Κριτικές</h3>
+            <p><strong>Στόχος:</strong> Ανεξάρτητο REST API για κριτικές μπαντών</p>
+            <p><strong>Endpoints:</strong></p>
+            <ul>
+                <li><code>POST /review/</code> - Δημιουργία κριτικής</li>
+                <li><code>GET /reviews/:band_name</code> - Λήψη κριτικών</li>
+                <li><code>PUT /reviewStatus/:review_id/:status</code> - Ενημέρωση status</li>
+                <li><code>DELETE /reviewDeletion/:review_id</code> - Διαγραφή κριτικής</li>
+            </ul>
+            <a href="test-api.html" class="nav-link-item" target="_blank">
+                Interface test REST API
+            </a>
+        </div>
+
+        <!-- Additional Resources -->
+        <div class="content-box">
+            <h3>Πρόσθετοι Πόροι</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Server Routes</h4>
+                    <ul>
+                        <li><a href="/initdb" target="_blank">/initdb</a> - Initialize database</li>
+                        <li><a href="/insertRecords" target="_blank">/insertRecords</a> - Insert data</li>
+                        <li><a href="/users" target="_blank">/users</a> - Get all users</li>
+                        <li><a href="/bands" target="_blank">/bands</a> - Get all bands</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h4>Τεκμηρίωση</h4>
+                    <ul>
+                        <li><strong>README.md</strong> - Πλήρης τεκμηρίωση</li>
+                        <li><strong>app.js</strong> - Server με σχόλια</li>
+                        <li><strong>register.js</strong> - AJAX validation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    <footer class="text-white text-center py-3">
+        <p>© 2025 - HY359 Web Programming - Άσκηση 3</p>
+        <p>George Kiosklis</p>
+    </footer>
+
+    <script>
+        "use strict";
+        
+        // Check if server is running
+        window.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('/users');
+                if (response.ok) {
+                    console.log('Server τρέχει σωστά');
+                }
+            } catch (error) {
+                alert('Ο Server δεν τρέχει! Εκκινήστε τον με: node app.js');
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

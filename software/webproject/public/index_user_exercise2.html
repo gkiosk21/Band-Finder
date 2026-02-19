@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Φόρμα εγγραφής απλού χρήστη">
+    <meta name="keywords" content="εγγραφή, χρήστης, φόρμα">
+    <meta name="author" content="George Kiosklis">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/indexstyle.css">
+    <link rel="stylesheet" href="css/map-style.css">
+    <title>Εγγραφή Απλού Χρήστη - Άσκηση 2</title>
+</head>
+<body>
+    <header class="bg-primary text-white text-center py-4">
+        <h1>Φόρμα Εγγραφής</h1>
+        <p>Συμπληρώστε τα στοιχεία σας για να δημιουργήσετε λογαριασμό</p>
+    </header>
+
+    <!-- SELECTION MENU -->
+    <div class="container mt-4">
+        <div class="registration-type-selector">
+            <h4 class="text-center mb-3">Επιλέξτε Τύπο Εγγραφής:</h4>
+            <div class="row justify-content-center">
+                <div class="col-md-5">
+                    <a href="index_user_exercise2.html" class="btn btn-selection btn-active btn-block">
+                        Απλός Χρήστης
+                    </a>
+                </div>
+                <div class="col-md-5">
+                    <a href="index_band_exercise2.html" class="btn btn-selection btn-block">
+                        Band
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN FORM -->
+    <main class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-container">
+                    <h2 class="text-center mb-4">Εγγραφή Απλού Χρήστη</h2>
+                    <form id="user-register-form" onsubmit="registerUser(event)">
+                        
+                        <!-- Username -->
+                        <div class="form-group">
+                            <label for="username">Username <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="user-username" 
+                                name="username"
+                                pattern="[a-zA-Z][a-zA-Z0-9]{5,}"
+                                title="Τουλάχιστον 6 χαρακτήρες, δεν ξεκινά με αριθμό ή σύμβολο"
+                                required
+                                onblur="checkAvailability('username', this.value, 'user-username')">
+                            <small class="form-text text-muted">Τουλάχιστον 6 χαρακτήρες (λατινικοί)</small>
+                            <span id="user-username-msg"></span> </div>
+                        </div>
+
+                        <!-- Email -->
+                        <!-- email patterns - HTML 5 -->
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input 
+                                type="email" 
+                                class="form-control" 
+                                id="user-email" 
+                                name="email"
+                                required
+                                onblur="checkAvailability('email', this.value, 'user-email')">
+                            <small class="form-text text-muted">Έγκυρη διεύθυνση email</small>
+                            <span id="user-email-msg"></span>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label for="password">Κωδικός Χρήστη <span class="required">*</span></label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="user-password" name="password"
+                                    pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[#$%&@!*]).{8,14}" minlength="8" maxlength="14" required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePassword('user-password', 'user-eye-icon')">
+                                        <span id="user-eye-icon">show</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">Επιβεβαίωση Κωδικού <span class="required">*</span></label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="user-password-conf" name="confirmPassword"
+                                    pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[#$%&@!*]).{8,14}" minlength="8" maxlength="14" required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePassword('user-password-conf', 'user-conf-eye-icon')">
+                                        <span id="user-conf-eye-icon">show</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- First Name -->
+                        <div class="form-group">
+                            <label for="firstname">Όνομα <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="user-firstname" 
+                                name="firstname"
+                                pattern="[a-zA-Zα-ωΑ-Ωά-ώΆ-Ώ\s]{3,30}"
+                                minlength="3"
+                                maxlength="30"
+                                title="3-30 χαρακτήρες, χωρίς αριθμούς"
+                                required>
+                            <small class="form-text text-muted">3-30 χαρακτήρες, χωρίς αριθμούς</small>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="form-group">
+                            <label for="lastname">Επώνυμο <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="user-lastname" 
+                                name="lastname"
+                                pattern="[a-zA-Zα-ωΑ-Ωά-ώΆ-Ώ\s]{3,30}"
+                                minlength="3"
+                                maxlength="30"
+                                title="3-30 χαρακτήρες, χωρίς αριθμούς"
+                                required>
+                            <small class="form-text text-muted">3-30 χαρακτήρες, χωρίς αριθμούς</small>
+                        </div>
+
+                        <!-- Birth Date -->
+                        <div class="form-group">
+                            <label for="birthdate">Ημερομηνία Γέννησης <span class="required">*</span></label>
+                            <input 
+                                type="date" 
+                                class="form-control" 
+                                id="user-birthdate" 
+                                name="birthdate"
+                                min="1920-01-01"
+                                max="2011-12-31"
+                                value="1980-01-01"
+                                required>
+                            <small class="form-text text-muted">Από 1920 έως 2011</small>
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="form-group">
+                            <label>Φύλο <span class="required">*</span></label><br>
+                            <select id="user-gender">
+                                <option value="male">Άνδρας</option>
+                                <option value="female">Γυναίκα</option>
+                            </select>
+                        </div>
+
+                        <!-- Country -->
+                        <div class="form-group">
+                            <label for="country">Χώρα <span class="required">*</span></label>
+                            <select class="form-control" id="user-country" name="country" required>
+                                <option value="AF">Afghanistan</option>
+                                <option value="AX">Åland Islands</option>
+                                <option value="AL">Albania</option>
+                                <option value="DZ">Algeria</option>
+                                <option value="AS">American Samoa</option>
+                                <option value="AD">Andorra</option>
+                                <option value="AO">Angola</option>
+                                <option value="AI">Anguilla</option>
+                                <option value="AQ">Antarctica</option>
+                                <option value="AG">Antigua and Barbuda</option>
+                                <option value="AR">Argentina</option>
+                                <option value="AM">Armenia</option>
+                                <option value="AW">Aruba</option>
+                                <option value="AU">Australia</option>
+                                <option value="AT">Austria</option>
+                                <option value="AZ">Azerbaijan</option>
+                                <option value="BS">Bahamas</option>
+                                <option value="BH">Bahrain</option>
+                                <option value="BD">Bangladesh</option>
+                                <option value="BB">Barbados</option>
+                                <option value="BY">Belarus</option>
+                                <option value="BE">Belgium</option>
+                                <option value="BZ">Belize</option>
+                                <option value="BJ">Benin</option>
+                                <option value="BM">Bermuda</option>
+                                <option value="BT">Bhutan</option>
+                                <option value="BO">Bolivia (Plurinational State of)</option>
+                                <option value="BA">Bosnia and Herzegovina</option>
+                                <option value="BW">Botswana</option>
+                                <option value="BV">Bouvet Island</option>
+                                <option value="BR">Brazil</option>
+                                <option value="IO">British Indian Ocean Territory</option>
+                                <option value="BN">Brunei Darussalam</option>
+                                <option value="BG">Bulgaria</option>
+                                <option value="BF">Burkina Faso</option>
+                                <option value="BI">Burundi</option>
+                                <option value="CV">Cabo Verde</option>
+                                <option value="KH">Cambodia</option>
+                                <option value="CM">Cameroon</option>
+                                <option value="CA">Canada</option>
+                                <option value="BQ">Caribbean Netherlands</option>
+                                <option value="KY">Cayman Islands</option>
+                                <option value="CF">Central African Republic</option>
+                                <option value="TD">Chad</option>
+                                <option value="CL">Chile</option>
+                                <option value="CN">China</option>
+                                <option value="CX">Christmas Island</option>
+                                <option value="CC">Cocos (Keeling) Islands</option>
+                                <option value="CO">Colombia</option>
+                                <option value="KM">Comoros</option>
+                                <option value="CG">Congo</option>
+                                <option value="CD">Congo, Democratic Republic of the</option>
+                                <option value="CK">Cook Islands</option>
+                                <option value="CR">Costa Rica</option>
+                                <option value="HR">Croatia</option>
+                                <option value="CU">Cuba</option>
+                                <option value="CW">Curaçao</option>
+                                <option value="CY">Cyprus</option>
+                                <option value="CZ">Czech Republic</option>
+                                <option value="CI">Côte d'Ivoire</option>
+                                <option value="DK">Denmark</option>
+                                <option value="DJ">Djibouti</option>
+                                <option value="DM">Dominica</option>
+                                <option value="DO">Dominican Republic</option>
+                                <option value="EC">Ecuador</option>
+                                <option value="EG">Egypt</option>
+                                <option value="SV">El Salvador</option>
+                                <option value="GQ">Equatorial Guinea</option>
+                                <option value="ER">Eritrea</option>
+                                <option value="EE">Estonia</option>
+                                <option value="SZ">Eswatini (Swaziland)</option>
+                                <option value="ET">Ethiopia</option>
+                                <option value="FK">Falkland Islands (Malvinas)</option>
+                                <option value="FO">Faroe Islands</option>
+                                <option value="FJ">Fiji</option>
+                                <option value="FI">Finland</option>
+                                <option value="FR">France</option>
+                                <option value="GF">French Guiana</option>
+                                <option value="PF">French Polynesia</option>
+                                <option value="TF">French Southern Territories</option>
+                                <option value="GA">Gabon</option>
+                                <option value="GM">Gambia</option>
+                                <option value="GE">Georgia</option>
+                                <option value="DE">Germany</option>
+                                <option value="GH">Ghana</option>
+                                <option value="GI">Gibraltar</option>
+                                <option value="GR" selected>Greece</option>
+                                <option value="GL">Greenland</option>
+                                <option value="GD">Grenada</option>
+                                <option value="GP">Guadeloupe</option>
+                                <option value="GU">Guam</option>
+                                <option value="GT">Guatemala</option>
+                                <option value="GG">Guernsey</option>
+                                <option value="GN">Guinea</option>
+                                <option value="GW">Guinea-Bissau</option>
+                                <option value="GY">Guyana</option>
+                                <option value="HT">Haiti</option>
+                                <option value="HM">Heard Island and Mcdonald Islands</option>
+                                <option value="HN">Honduras</option>
+                                <option value="HK">Hong Kong</option>
+                                <option value="HU">Hungary</option>
+                                <option value="IS">Iceland</option>
+                                <option value="IN">India</option>
+                                <option value="ID">Indonesia</option>
+                                <option value="IR">Iran</option>
+                                <option value="IQ">Iraq</option>
+                                <option value="IE">Ireland</option>
+                                <option value="IM">Isle of Man</option>
+                                <option value="IL">Israel</option>
+                                <option value="IT">Italy</option>
+                                <option value="JM">Jamaica</option>
+                                <option value="JP">Japan</option>
+                                <option value="JE">Jersey</option>
+                                <option value="JO">Jordan</option>
+                                <option value="KZ">Kazakhstan</option>
+                                <option value="KE">Kenya</option>
+                                <option value="KI">Kiribati</option>
+                                <option value="KP">Korea, North</option>
+                                <option value="KR">Korea, South</option>
+                                <option value="XK">Kosovo</option>
+                                <option value="KW">Kuwait</option>
+                                <option value="KG">Kyrgyzstan</option>
+                                <option value="LA">Lao People's Democratic Republic</option>
+                                <option value="LV">Latvia</option>
+                                <option value="LB">Lebanon</option>
+                                <option value="LS">Lesotho</option>
+                                <option value="LR">Liberia</option>
+                                <option value="LY">Libya</option>
+                                <option value="LI">Liechtenstein</option>
+                                <option value="LT">Lithuania</option>
+                                <option value="LU">Luxembourg</option>
+                                <option value="MO">Macao</option>
+                                <option value="MK">Macedonia North</option>
+                                <option value="MG">Madagascar</option>
+                                <option value="MW">Malawi</option>
+                                <option value="MY">Malaysia</option>
+                                <option value="MV">Maldives</option>
+                                <option value="ML">Mali</option>
+                                <option value="MT">Malta</option>
+                                <option value="MH">Marshall Islands</option>
+                                <option value="MQ">Martinique</option>
+                                <option value="MR">Mauritania</option>
+                                <option value="MU">Mauritius</option>
+                                <option value="YT">Mayotte</option>
+                                <option value="MX">Mexico</option>
+                                <option value="FM">Micronesia</option>
+                                <option value="MD">Moldova</option>
+                                <option value="MC">Monaco</option>
+                                <option value="MN">Mongolia</option>
+                                <option value="ME">Montenegro</option>
+                                <option value="MS">Montserrat</option>
+                                <option value="MA">Morocco</option>
+                                <option value="MZ">Mozambique</option>
+                                <option value="MM">Myanmar (Burma)</option>
+                                <option value="NA">Namibia</option>
+                                <option value="NR">Nauru</option>
+                                <option value="NP">Nepal</option>
+                                <option value="NL">Netherlands</option>
+                                <option value="AN">Netherlands Antilles</option>
+                                <option value="NC">New Caledonia</option>
+                                <option value="NZ">New Zealand</option>
+                                <option value="NI">Nicaragua</option>
+                                <option value="NE">Niger</option>
+                                <option value="NG">Nigeria</option>
+                                <option value="NU">Niue</option>
+                                <option value="NF">Norfolk Island</option>
+                                <option value="MP">Northern Mariana Islands</option>
+                                <option value="NO">Norway</option>
+                                <option value="OM">Oman</option>
+                                <option value="PK">Pakistan</option>
+                                <option value="PW">Palau</option>
+                                <option value="PS">Palestine</option>
+                                <option value="PA">Panama</option>
+                                <option value="PG">Papua New Guinea</option>
+                                <option value="PY">Paraguay</option>
+                                <option value="PE">Peru</option>
+                                <option value="PH">Philippines</option>
+                                <option value="PN">Pitcairn Islands</option>
+                                <option value="PL">Poland</option>
+                                <option value="PT">Portugal</option>
+                                <option value="PR">Puerto Rico</option>
+                                <option value="QA">Qatar</option>
+                                <option value="RE">Reunion</option>
+                                <option value="RO">Romania</option>
+                                <option value="RU">Russian Federation</option>
+                                <option value="RW">Rwanda</option>
+                                <option value="BL">Saint Barthelemy</option>
+                                <option value="SH">Saint Helena</option>
+                                <option value="KN">Saint Kitts and Nevis</option>
+                                <option value="LC">Saint Lucia</option>
+                                <option value="MF">Saint Martin</option>
+                                <option value="PM">Saint Pierre and Miquelon</option>
+                                <option value="VC">Saint Vincent and the Grenadines</option>
+                                <option value="WS">Samoa</option>
+                                <option value="SM">San Marino</option>
+                                <option value="ST">Sao Tome and Principe</option>
+                                <option value="SA">Saudi Arabia</option>
+                                <option value="SN">Senegal</option>
+                                <option value="RS">Serbia</option>
+                                <option value="CS">Serbia and Montenegro</option>
+                                <option value="SC">Seychelles</option>
+                                <option value="SL">Sierra Leone</option>
+                                <option value="SG">Singapore</option>
+                                <option value="SX">Sint Maarten</option>
+                                <option value="SK">Slovakia</option>
+                                <option value="SI">Slovenia</option>
+                                <option value="SB">Solomon Islands</option>
+                                <option value="SO">Somalia</option>
+                                <option value="ZA">South Africa</option>
+                                <option value="GS">
+                                    South Georgia and the South Sandwich Islands
+                                </option>
+                                <option value="SS">South Sudan</option>
+                                <option value="ES">Spain</option>
+                                <option value="LK">Sri Lanka</option>
+                                <option value="SD">Sudan</option>
+                                <option value="SR">Suriname</option>
+                                <option value="SJ">Svalbard and Jan Mayen</option>
+                                <option value="SE">Sweden</option>
+                                <option value="CH">Switzerland</option>
+                                <option value="SY">Syria</option>
+                                <option value="TW">Taiwan</option>
+                                <option value="TJ">Tajikistan</option>
+                                <option value="TZ">Tanzania</option>
+                                <option value="TH">Thailand</option>
+                                <option value="TL">Timor-Leste</option>
+                                <option value="TG">Togo</option>
+                                <option value="TK">Tokelau</option>
+                                <option value="TO">Tonga</option>
+                                <option value="TT">Trinidad and Tobago</option>
+                                <option value="TN">Tunisia</option>
+                                <option value="TR">Turkey (Türkiye)</option>
+                                <option value="TM">Turkmenistan</option>
+                                <option value="TC">Turks and Caicos Islands</option>
+                                <option value="TV">Tuvalu</option>
+                                <option value="UM">U.S. Outlying Islands</option>
+                                <option value="UG">Uganda</option>
+                                <option value="UA">Ukraine</option>
+                                <option value="AE">United Arab Emirates</option>
+                                <option value="GB">United Kingdom</option>
+                                <option value="US">United States</option>
+                                <option value="UY">Uruguay</option>
+                                <option value="UZ">Uzbekistan</option>
+                                <option value="VU">Vanuatu</option>
+                                <option value="VA">Vatican City Holy See</option>
+                                <option value="VE">Venezuela</option>
+                                <option value="VN">Vietnam</option>
+                                <option value="VG">Virgin Islands, British</option>
+                                <option value="VI">Virgin Islands, U.S</option>
+                                <option value="WF">Wallis and Futuna</option>
+                                <option value="EH">Western Sahara</option>
+                                <option value="YE">Yemen</option>
+                                <option value="ZM">Zambia</option>
+                                <option value="ZW">Zimbabwe</option>
+                            </select>
+                        </div>
+
+                        <!-- City -->
+                        <div class="form-group">
+                            <label for="city">Πόλη Διαμονής <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="user-city" 
+                                name="city"
+                                minlength="3"
+                                maxlength="30"
+                                required>
+                            <small class="form-text text-muted">3-30 χαρακτήρες</small>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="form-group">
+                            <label for="address">Διεύθυνση <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="user-address" 
+                                name="address"
+                                minlength="5"
+                                maxlength="150"
+                                placeholder="Οδός, Αριθμός, Τ.Κ."
+                                required>
+                            <small class="form-text text-muted">5-150 χαρακτήρες</small>
+                        </div>
+                        
+                        <!-- Address Verification Button -->
+                        <div class="form-group">
+                            <button type="button" id="verifyAddressBtn" class="btn btn-info btn-block">
+                                 Επαλήθευση Διεύθυνσης
+                            </button>
+                        </div>
+
+                        <!-- Address Verification Message Area -->
+                        <div id="addressMessage" class="address-message"></div>
+
+                        <!-- Show Map Button (hidden initially) -->
+                        <div class="form-group" id="showMapContainer" style="display: none;">
+                            <button type="button" id="showMapBtn" class="btn btn-success btn-block">
+                                Εμφάνιση Χάρτη
+                            </button>
+                        </div>
+
+                        <!-- Map Container -->
+                        <div id="mapContainer" class="map-container" style="display: none;">
+                            <div id="Map" class="osm-map"></div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-group">
+                            <label for="telephone">Τηλέφωνο <span class="required">*</span></label>
+                            <input 
+                                type="tel" 
+                                class="form-control" 
+                                id="user-telephone" 
+                                name="telephone"
+                                pattern="[0-9]{10,14}"
+                                title="10-14 ψηφία"
+                                placeholder="π.χ. 2810123456"
+                                required>
+                            <small class="form-text text-muted">10-14 ψηφία</small>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary btn-block btn-lg mt-4">
+                            Εγγραφή
+                        </button>
+                        <div id="error-message" style="color: red;"></div>
+                    </form>
+
+                    <div id="jsonOutput" class="mt-5" style="display: none;">
+                        <h3 class="text-center mb-3">Δεδομένα Φόρμας σε JSON</h3>
+                        <div class="alert alert-info">
+                            <h5>Η φόρμα υποβλήθηκε επιτυχώς!</h5>
+                            <p class="mb-2">Τα δεδομένα σας σε JSON μορφή:</p>
+                        </div>
+                        <pre id="jsonContent" class="bg-dark text-light p-3 rounded" style="max-height: 500px; overflow-y: auto;"></pre>
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn btn-secondary" onclick="copyJSON()">
+                                Αντιγραφή JSON
+                            </button>
+                            <button type="button" class="btn btn-warning ml-2" onclick="resetForm()">
+                                Νέα Εγγραφή
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-primary text-white text-center py-3">
+        <p>&copy; 2025 George Kiosklis - hy359</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- OpenLayers for Maps -->
+    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+    
+    <!-- Address Verification Script -->
+    <script src="js/address-verification-user.js"></script>
+
+    <!-- Form Handler Script -->
+    <script src="js/register.js"></script>
+
+</body>
+</html>
